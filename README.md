@@ -5,3 +5,4 @@ This repository contains implementations of fundamental machine learning algorit
 ## Structure
 
 - 'linear-regression/': Implementation of Linear Regression without using scikit-learn.
+- 'gradient-descent/' : Implementation of Gradient Descent from scratch.
