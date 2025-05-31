@@ -4,5 +4,7 @@ This repository contains implementations of fundamental machine learning algorit
 
 ## Structure
 
-- 'linear-regression/': Implementation of Linear Regression without using scikit-learn.
+- 'feature-scaling/' : Implementation of 2 popular feature scaling methods from scratch.
 - 'gradient-descent/' : Implementation of Gradient Descent from scratch.
+- 'linear-regression/': Implementation of Linear Regression without using scikit-learn.
+- 'outlier-detection/' : Implementation of 3 most commonly used outlier detection methods - n-Standard Deviation, Z-Score and IQR.
