@@ -8,3 +8,4 @@ This repository contains implementations of fundamental machine learning algorit
 - 'gradient-descent/' : Implementation of Gradient Descent from scratch.
 - 'linear-regression/': Implementation of Linear Regression without using scikit-learn.
 - 'outlier-detection/' : Implementation of 3 most commonly used outlier detection methods - n-Standard Deviation, Z-Score and IQR.
+- 'regularisation/' : Implementation of regularisation techniques from scratch.
