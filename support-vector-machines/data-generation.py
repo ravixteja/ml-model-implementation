@@ -6,14 +6,14 @@ import matplotlib.pyplot as plt
 np.random.seed(42)
 
 # Generate 50 points for class 1 (label: +1)
-x1_class1 = np.random.normal(loc=2.5, scale=0.4, size=50)
-x2_class1 = np.random.normal(loc=2.5, scale=0.4, size=50)
-y_class1 = np.ones(50)
+x1_class1 = np.random.normal(loc=2.5, scale=0.4, size=75)
+x2_class1 = np.random.normal(loc=2.5, scale=0.4, size=75)
+y_class1 = np.ones(75)
 
 # Generate 50 points for class -1 (label: -1)
-x1_class2 = np.random.normal(loc=0.5, scale=0.4, size=50)
-x2_class2 = np.random.normal(loc=0.5, scale=0.4, size=50)
-y_class2 = -1 * np.ones(50)
+x1_class2 = np.random.normal(loc=0.5, scale=0.4, size=62)
+x2_class2 = np.random.normal(loc=0.5, scale=0.4, size=62)
+y_class2 = -1 * np.ones(62)
 
 # Combine the data
 x1 = np.concatenate((x1_class1, x1_class2))
@@ -36,4 +36,6 @@ plt.ylabel('$x_2$', fontsize=13)
 plt.title('Linearly Separable Data for Hard Margin SVM', fontsize=14)
 plt.legend()
 plt.grid(True)
+plt.savefig('data-plot-hard-margin-svm.png')
 plt.show()
+

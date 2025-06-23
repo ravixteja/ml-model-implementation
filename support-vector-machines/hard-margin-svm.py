@@ -42,11 +42,11 @@ y = np.array(dataset.drop(['bias_term','x1','x2'],axis=1))
 # print(y)
 
 # initialize weights
-w = np.array([
-    [0.25],
-    [-1.235],
-    [1.0458]
-])
+# w = np.array([
+#     [0.25],
+#     [-1.235],
+#     [1.0458]
+# ])
 
 # now implement the algorithm
 
