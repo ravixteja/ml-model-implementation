@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 
 # load dataset
 dataset = pd.read_csv('svm-soft-margin-dataset.csv')
+# you can replace the address with svm-hard-margin-dataset.csv
+# to visualize for th perfectly separable dataset
 # print(dataset.sample(5))
 
 # plot for visualization
@@ -47,7 +49,7 @@ Y = np.array(dataset.drop(['x1','x2'],axis=1))
 from cvxopt import matrix,solvers
 
 # define regularization term
-C = 5
+C = 0.3
 
 # compute different parts of the dual
 
@@ -148,6 +150,30 @@ bias = bias / len(sv_alphas_index[0])
 print(bias)
 
 
+# use the algorithm to make predictions
+def predictClass(test_point):
+    flag = 1
+    if (bias + (w[0]*test_point[0]) + (w[1]*test_point[1]) < 0):
+        flag = -1
+    return flag
+
+
+
+test_point = [0,0]
+test_point[0] = float(input('Enter X1:'))
+test_point[1] = float(input('Enter X2:'))
+
+# plot the test point for visualization
+plt.scatter(test_point[0],test_point[1],label='Test Point',color='green')
+
+prediction = predictClass(test_point)
+if prediction > 0:
+    label = 'Class +1'
+else:
+    label = 'Class -1'
+print(f'The point{test_point} is classified as {label}')
+
+
 # form the discriminant function(decision boundary)
 x1 = np.linspace(-0.5,3.5,50)
 x2 = np.linspace(-1,4,50)
@@ -165,7 +191,7 @@ plt.plot(x1,margin_1,label='Margin',color='grey',linestyle='--',linewidth=0.8)
 plt.plot(x1,margin_2,color='grey',linestyle='--',linewidth=0.8)
 plt.xlabel('$X1$',fontsize=15)
 plt.ylabel('$X2$',fontsize=15)
-plt.title('Hard Margin Support Vector Classifier',fontsize=15)
+plt.title('Soft Margin Support Vector Classifier',fontsize=15)
 plt.legend()
 plt.savefig('softmargin-decision-boundary.png')
 plt.show()
