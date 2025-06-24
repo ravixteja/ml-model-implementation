@@ -11,10 +11,16 @@ import matplotlib.pyplot as plt
 # load dataset
 dataset = pd.read_csv('svm-hard-margin-dataset.csv')
 
-# add column of 1's to incorporate bias term
-dataset['bias_term'] = 1
-bias_term = dataset.pop('bias_term')
-dataset.insert(0,'bias_term',bias_term)
+# # add column of 1's to incorporate bias term
+# dataset['bias_term'] = 1
+# bias_term = dataset.pop('bias_term')
+# dataset.insert(0,'bias_term',bias_term)
+
+#####################################################################
+# this is a mistake --- never include bias_term (or vector of 1s)
+# this leads to optimization along with the features - which is not desired
+# Optimization solves for weight only
+# bias term is later calculated
 
 # print(dataset.sample(5))
 
@@ -33,7 +39,7 @@ neg_class = dataset[dataset['y']==-1]
 
 # extract input and output features into numpy arrays
 X = np.array(dataset.drop('y',axis=1))
-Y = np.array(dataset.drop(['bias_term','x1','x2'],axis=1))
+Y = np.array(dataset.drop(['x1','x2'],axis=1))
 
 # print(X)
 # print(Y)
@@ -110,22 +116,76 @@ Y_sv = Y[sv_alphas_index]
 # print(Y_sv)
 
 # plot these points along with the dataset to visualize
-plt.scatter(pos_class['x1'],pos_class['x2'],marker='+')
-plt.scatter(neg_class['x1'],neg_class['x2'],marker='.')
-plt.scatter(X_sv[:,1],X_sv[:,2])
+# dataset
+plt.scatter(pos_class['x1'],pos_class['x2'],marker='+',label='Class +1')
+plt.scatter(neg_class['x1'],neg_class['x2'],marker='.',label='Class -1')
+# support vectors
+plt.scatter(X_sv[:,0],X_sv[:,1],facecolors='none', edgecolors='red', label='Support Vectors')
 # plt.show()
 
 # calculate the weights matrix
 w = np.sum(alphas[sv_alphas_index] * X_sv * Y_sv, axis=0)
 # print()
-print(w)
+# print(w)
+
+# calculate bias term
+
+# wkt for the support vectors
+# y(w.T*x + b) = 1
+# so
+# b = (1/y) - w.T*x
+# calculate this for all support vectors and take average
+bias = 0
+for i in range(len(sv_alphas_index[0])):
+    # print(X_sv[i])
+    # print(Y_sv[i])
+    bias = bias + (1/Y_sv[i][0]) - np.dot(w,X_sv[i])
+    # print(bias)
+
+bias = bias / len(sv_alphas_index[0])
+# print(bias)
+
+# use the algorithm to make predictions
+def predictClass(test_point):
+    flag = 1
+    if (bias + (w[0]*test_point[0]) + (w[1]*test_point[1]) < 0):
+        flag = -1
+    return flag
+
+
+
+test_point = [0,0]
+test_point[0] = float(input('Enter X1:'))
+test_point[1] = float(input('Enter X2:'))
+
+# plot the test point for visualization
+plt.scatter(test_point[0],test_point[1],label='Test Point',color='g')
+
+prediction = predictClass(test_point)
+if prediction > 0:
+    label = 'Class +1'
+else:
+    label = 'Class -1'
+print(f'The point{test_point} is classified as {label}')
 
 # form the discriminant function(decision boundary)
 x1 = np.linspace(-0.5,3.5,50)
 x2 = np.linspace(-1,4,50)
 
-x2 = -(w[0] + (w[1]*x1)) / w[2]
+x2 = -(bias + (w[0]*x1)) / w[1]
+# margins for plotting reference
+margin_1 = (1 -(bias + (w[0]*x1))) / w[1]
+margin_2 = (-1 -(bias + (w[0]*x1))) / w[1]
 
 # plot the decision boundary
 plt.plot(x1,x2,label='Final Decision Boundary',color='black')
+
+# plot the margins
+plt.plot(x1,margin_1,label='Margin',color='grey',linestyle='--',linewidth=0.8)
+plt.plot(x1,margin_2,color='grey',linestyle='--',linewidth=0.8)
+plt.xlabel('$X1$',fontsize=15)
+plt.ylabel('$X2$',fontsize=15)
+plt.title('Hard Margin Support Vector Classifier',fontsize=15)
+plt.legend()
+plt.savefig('hardmargin-decision-boundary.png')
 plt.show()
