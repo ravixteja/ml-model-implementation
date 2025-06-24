@@ -159,7 +159,7 @@ test_point[0] = float(input('Enter X1:'))
 test_point[1] = float(input('Enter X2:'))
 
 # plot the test point for visualization
-plt.scatter(test_point[0],test_point[1],label='Test Point',color='g')
+plt.scatter(test_point[0],test_point[1],label='Test Point',color='green')
 
 prediction = predictClass(test_point)
 if prediction > 0:
