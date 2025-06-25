@@ -1,4 +1,5 @@
-# Here we explore implementation of SVM using polynomial kernel
+# Here we explore implementation of SVM
+# using Radial Bsisi Function Kernel
 
 # import required libraries
 import numpy as np
@@ -12,9 +13,7 @@ dataset = pd.read_csv('svm-kernel-dataset.csv')
 # plot for visualization
 # plt.scatter(dataset['x1'],dataset['x2'])
 # plt.show()
-
 # we see the data is clearly not separable linearly
-
 
 # separate based on class
 pos_class = dataset[dataset['y']==1]
@@ -30,19 +29,17 @@ plt.scatter(neg_class['x1'],neg_class['x2'],marker='.')
 X = np.array(dataset.drop('y',axis=1))
 Y = np.array(dataset.drop(['x1','x2'],axis=1))
 
-# print(X.shape)
+# print(X)
 # print(Y)
 
-# define kernel function
-def polynomialKernel(r,d,X,Y):
-    # for i in range(X.shape[0]):
-    #     print(X[i])
-    kernel_value = (X@Y.T + r) ** d
-    # print(kernel_value.shape)
+# define the kernel function
+def rbfKernel(a,b,gamma):
+    diff = a - b
+    kernel_value = np.exp((-gamma) * (diff@diff.T))
+    # print(kernel_value)
     return kernel_value
 
-# polynomialKernel(2,2,X)
-
+# rbfKernel(1.23,-8.73,0.1)
 
 # now implement the minimization of dual objective function
 
@@ -61,14 +58,31 @@ def polynomialKernel(r,d,X,Y):
 from cvxopt import matrix,solvers
 
 # define regularization term
-C = 0.3
+C = 5
 
 # compute different parts of the dual
 
-# here gram matrix would be the matrix computed by the kernel function * Y@Y.T
-YX = matrix(polynomialKernel(2,4,X,X) * np.dot(Y,Y.T))
-print(YX)
+# compute kernel matrix - K(x_i,x_j)
+# define gamma value
+gamma = 0.1
 
+# count=0
+kernel_matrix = np.zeros((X.shape[0],X.shape[0]))
+for i in range(X.shape[0]):
+    # print(X[i])
+    for j in range(X.shape[0]):
+        # print(X[i]-X[j])
+        val = rbfKernel(X[i],X[j],gamma)
+        kernel_matrix[i,j] = val
+        # count+=1
+# print(count)
+# print(kernel_matrix)
+
+# compute other matrices
+
+# here gram matrix would be the matrix computed by the kernel function * Y@Y.T
+YX = matrix(kernel_matrix * np.dot(Y,Y.T))
+# print(YX)
 
 # to incorporate minus sign
 minus = matrix(-1 * np.ones((X.shape[0],1)))
@@ -133,6 +147,7 @@ plt.scatter(neg_class['x1'],neg_class['x2'],marker='.',label='Class -1')
 plt.scatter(X_sv[:,0],X_sv[:,1],facecolors='none', edgecolors='black', label='Support Vectors')
 # plt.show()
 
+
 # no weights matrix required
 
 # calculate bias term
@@ -143,24 +158,24 @@ plt.scatter(X_sv[:,0],X_sv[:,1],facecolors='none', edgecolors='black', label='Su
 # b = (1/y) - w.T*x
 # calculate this for all support vectors and take average
 bias = 0
-K = polynomialKernel(2,4,X,X)
 for i in sv_alphas_index[0]:
     # print(X[i])
     # print(Y[i])
     summation = 0
     for j in range(X.shape[0]):
-        summation = summation + alphas[j] * Y[j] * K[j, i]
+        summation = summation + alphas[j] * Y[j] * kernel_matrix[j, i]
     # print(summation)
     bias = bias + (Y[i]-summation)
 
 bias = bias / len(sv_alphas_index[0])
 print(bias)
 
+
 # prediction function
 def predictClass(test_point):
     result = 0
     for i in range(X.shape[0]):
-        result = result + alphas[i] * Y[i] * polynomialKernel(2,4,test_point,X[i])
+        result = result + alphas[i] * Y[i] * rbfKernel(test_point,X[i],gamma)
     result = result + bias
     return 1 if result>0 else -1
 
@@ -181,6 +196,6 @@ plt.scatter(test_point[0],test_point[1],label='Test Point',color='b')
 plt.legend()
 plt.xlabel('$X1$',fontsize=15)
 plt.ylabel('$X2$',fontsize=15)
-plt.title('Support Vector Machine Classifier using Polynomial Kernel',fontsize=15)
-plt.savefig('svm-using-polynomial-kernel.png')
+plt.title('Support Vector Machine Classifier using RBF Kernel',fontsize=15)
+plt.savefig('svm-using-rbf-kernel.png')
 plt.show()
